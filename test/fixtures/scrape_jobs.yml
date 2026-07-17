@@ -1,0 +1,1 @@
+# Tests build their own ScrapeJob records; no shared fixtures needed.
