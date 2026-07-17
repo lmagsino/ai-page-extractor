@@ -112,7 +112,7 @@ run against saved page fixtures.
 ## Roadmap
 
 - [x] **M0** — Rails 8 scaffold, CI, repository setup
-- [ ] **M1** — Core pipeline: model, fetch → clean → extract → validate, SSRF guard
+- [x] **M1** — Core pipeline: model, fetch → clean → extract → validate, SSRF guard
 - [ ] **M2** — Live updates (Turbo Streams), curated gallery, repeat-scrape cache
 - [ ] **M3** — Deploy to a live URL, rate limiting, cost controls
 
