@@ -45,9 +45,9 @@ class Extractor
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system: system_prompt,
-      tools: [tool_schema],
+      tools: [ tool_schema ],
       tool_choice: { type: "tool", name: TOOL_NAME },
-      messages: [{ role: "user", content: user_message }]
+      messages: [ { role: "user", content: user_message } ]
     }
   end
 
@@ -69,7 +69,7 @@ class Extractor
             description: "Anything you couldn't find or were unsure about. Empty string if nothing to note."
           }
         },
-        required: ["items"]
+        required: [ "items" ]
       }
     }
   end

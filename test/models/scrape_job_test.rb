@@ -56,13 +56,13 @@ class ScrapeJobTest < ActiveSupport::TestCase
     new_featured = ScrapeJob.create!(valid_attrs(featured: true, created_at: 1.hour.ago))
     ScrapeJob.create!(valid_attrs(featured: false))
 
-    assert_equal [new_featured, old_featured], ScrapeJob.gallery.to_a
+    assert_equal [ new_featured, old_featured ], ScrapeJob.gallery.to_a
   end
 
   test "result round-trips through result_json" do
     job = ScrapeJob.new(valid_attrs)
-    job.result = { "items" => [{ "name" => "Widget" }], "notes" => "" }
-    assert_equal [{ "name" => "Widget" }], job.result["items"]
+    job.result = { "items" => [ { "name" => "Widget" } ], "notes" => "" }
+    assert_equal [ { "name" => "Widget" } ], job.result["items"]
     assert_equal "", job.result["notes"]
   end
 

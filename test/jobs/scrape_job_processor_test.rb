@@ -27,14 +27,14 @@ class ScrapeJobProcessorTest < ActiveSupport::TestCase
     job = new_job
     with_pipeline(
       html: "<html><body><h1>Widgets</h1><p>Widget A</p></body></html>",
-      extraction: { "items" => [{ "name" => "Widget A" }], "notes" => "" }
+      extraction: { "items" => [ { "name" => "Widget A" } ], "notes" => "" }
     ) do
       ScrapeJobProcessor.perform_now(job.id)
     end
 
     job.reload
     assert job.done?, "expected done, was #{job.status}"
-    assert_equal [{ "name" => "Widget A" }], job.result["items"]
+    assert_equal [ { "name" => "Widget A" } ], job.result["items"]
     assert_nil job.error_message
   end
 

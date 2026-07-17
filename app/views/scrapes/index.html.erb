@@ -1,0 +1,15 @@
+<h1>Example extractions</h1>
+<p>A gallery of extractions run against real pages. <%= link_to "Try your own", new_scrape_path %>.</p>
+
+<% if @scrape_jobs.any? %>
+  <ul class="gallery">
+    <% @scrape_jobs.each do |job| %>
+      <li>
+        <%= link_to job.url, scrape_path(job) %>
+        <span class="prompt">— <%= truncate(job.prompt, length: 80) %></span>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No example extractions yet. <%= link_to "Run the first one", new_scrape_path %>.</p>
+<% end %>

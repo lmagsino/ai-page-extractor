@@ -1,0 +1,29 @@
+<h1>AI Page Extractor</h1>
+<p>Give it a URL and describe what you want pulled off the page in plain English.</p>
+
+<%= form_with model: @scrape_job, url: scrapes_path do |form| %>
+  <% if @scrape_job.errors.any? %>
+    <div class="errors">
+      <ul>
+        <% @scrape_job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :url, "Page URL" %>
+    <%= form.url_field :url, placeholder: "https://example.com/products" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :prompt, "What do you want extracted?" %>
+    <%= form.text_area :prompt, rows: 3,
+          placeholder: "e.g. Extract every product name, price, and availability" %>
+  </div>
+
+  <%= form.submit "Extract" %>
+<% end %>
+
+<p><%= link_to "View example extractions", scrapes_path %></p>

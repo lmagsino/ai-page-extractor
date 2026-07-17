@@ -1,0 +1,36 @@
+<h1>Extraction #<%= @scrape_job.id %></h1>
+
+<p><strong>URL:</strong> <%= @scrape_job.url %></p>
+<p><strong>Prompt:</strong> <%= @scrape_job.prompt %></p>
+<p id="status"><strong>Status:</strong> <%= @scrape_job.status %></p>
+
+<div id="result-container">
+  <% if @scrape_job.done? && @scrape_job.result %>
+    <%= render "result", result: @scrape_job.result %>
+  <% elsif @scrape_job.failed? %>
+    <p class="error">Failed: <%= @scrape_job.error_message %></p>
+  <% else %>
+    <p>Working on it&hellip; this page will update automatically.</p>
+  <% end %>
+</div>
+
+<% unless @scrape_job.done? || @scrape_job.failed? %>
+  <script>
+    // Polling fallback (Turbo Streams replaces this in M2). Refreshes once the
+    // background job reaches a terminal state.
+    const poll = setInterval(async () => {
+      const res = await fetch("<%= status_scrape_path(@scrape_job) %>");
+      const data = await res.json();
+      document.querySelector("#status").innerHTML = "<strong>Status:</strong> " + data.status;
+      if (data.status === "done" || data.status === "failed") {
+        clearInterval(poll);
+        window.location.reload();
+      }
+    }, 1500);
+  </script>
+<% end %>
+
+<p>
+  <%= link_to "New extraction", new_scrape_path %> ·
+  <%= link_to "Example extractions", scrapes_path %>
+</p>

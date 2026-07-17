@@ -24,11 +24,11 @@ class ExtractorTest < ActiveSupport::TestCase
 
   test "returns the tool_use input hash on success" do
     ext = build
-    resp = FakeResp.new(200, tool_use_body(items: [{ "name" => "Widget" }], notes: ""))
+    resp = FakeResp.new(200, tool_use_body(items: [ { "name" => "Widget" } ], notes: ""))
     ext.define_singleton_method(:perform_request) { |_body| resp }
 
     result = ext.call
-    assert_equal [{ "name" => "Widget" }], result["items"]
+    assert_equal [ { "name" => "Widget" } ], result["items"]
     assert_equal "", result["notes"]
   end
 
@@ -46,7 +46,7 @@ class ExtractorTest < ActiveSupport::TestCase
 
   test "raises when the model returns no tool_use block" do
     ext = build
-    body = { "content" => [{ "type" => "text", "text" => "here is your data" }] }.to_json
+    body = { "content" => [ { "type" => "text", "text" => "here is your data" } ] }.to_json
     ext.define_singleton_method(:perform_request) { |_b| FakeResp.new(200, body) }
     err = assert_raises(Extractor::ExtractionError) { ext.call }
     assert_match(/extract_data/, err.message)
@@ -62,7 +62,7 @@ class ExtractorTest < ActiveSupport::TestCase
     ext = build
     ext.define_singleton_method(:retry_delay) { |_a| 0 } # no real sleeping
     calls = 0
-    good = tool_use_body(items: [{ "x" => 1 }])
+    good = tool_use_body(items: [ { "x" => 1 } ])
     ext.define_singleton_method(:perform_request) do |_b|
       calls += 1
       calls < 3 ? FakeResp.new(503, "unavailable") : FakeResp.new(200, good)
@@ -70,7 +70,7 @@ class ExtractorTest < ActiveSupport::TestCase
 
     result = ext.call
     assert_equal 3, calls
-    assert_equal [{ "x" => 1 }], result["items"]
+    assert_equal [ { "x" => 1 } ], result["items"]
   end
 
   test "gives up after exhausting retries on persistent 5xx" do
