@@ -17,6 +17,14 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# --- AI Page Extractor pipeline ---
+gem "faraday"              # HTTP client for static fetch + Anthropic API
+gem "ferrum"               # headless Chrome via CDP, for JS-rendered pages
+gem "nokogiri"             # HTML parsing / noise stripping
+gem "reverse_markdown"     # HTML -> markdown, cuts token count before the LLM
+gem "dry-schema"           # outer-shape validation of extraction results
+gem "private_address_check" # SSRF guard: reject private/loopback/link-local IPs
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
