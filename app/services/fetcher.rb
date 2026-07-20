@@ -116,7 +116,7 @@ class Fetcher
 
   def fetch_with_browser(uri)
     ip = resolve_public_ip!(uri.hostname)
-    browser = Ferrum::Browser.new(
+    options = {
       headless: true,
       timeout: BROWSER_TIMEOUT,
       browser_options: {
@@ -125,7 +125,10 @@ class Fetcher
         "host-resolver-rules" => "MAP #{uri.hostname} #{ip}",
         "user-agent" => USER_AGENT
       }
-    )
+    }
+    # In the container we pin the path (see Dockerfile); locally Ferrum auto-detects.
+    options[:browser_path] = ENV["FERRUM_BROWSER_PATH"] if ENV["FERRUM_BROWSER_PATH"].present?
+    browser = Ferrum::Browser.new(**options)
 
     Timeout.timeout(BROWSER_DEADLINE, FetchError, "Browser timed out fetching #{@url}") do
       browser.go_to(uri.to_s)
