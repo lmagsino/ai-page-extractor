@@ -8,15 +8,6 @@ class ScrapeJobProcessorTest < ActiveSupport::TestCase
 
   teardown { Rails.cache = @original_cache }
 
-  # Swap a class method for the duration of the block, then restore it.
-  def stub_class_method(klass, method, impl)
-    original = klass.method(method)
-    klass.define_singleton_method(method, impl)
-    yield
-  ensure
-    klass.define_singleton_method(method, original)
-  end
-
   def new_job
     ScrapeJob.create!(url: "https://example.com/products", prompt: "extract product names")
   end

@@ -56,7 +56,16 @@ class FetcherTest < ActiveSupport::TestCase
   def fetcher_with_guard_stubbed
     f = Fetcher.new("http://example.com")
     def f.parse_and_guard!(_url) = URI.parse("http://example.com")
+    def f.enforce_politeness!(_uri) = nil # robots + throttle covered separately
     f
+  end
+
+  test "raises when robots.txt disallows the path" do
+    f = Fetcher.new("http://example.com/private")
+    def f.parse_and_guard!(_url) = URI.parse("http://example.com/private")
+    stub_class_method(RobotsPolicy, :allowed?, ->(_uri, **) { false }) do
+      assert_raises(Fetcher::DisallowedByRobotsError) { f.call }
+    end
   end
 
   test "returns static html when sufficiently rendered" do

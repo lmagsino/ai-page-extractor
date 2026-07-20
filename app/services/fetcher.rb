@@ -25,6 +25,7 @@ require "private_address_check/tcpsocket_ext"
 class Fetcher
   class FetchError < StandardError; end
   class BlockedError < FetchError; end # SSRF / disallowed target
+  class DisallowedByRobotsError < FetchError; end # robots.txt opt-out
 
   MIN_TEXT_RATIO = 0.02 # visible-text bytes vs total HTML bytes
   STATIC_TIMEOUT = 10
@@ -32,6 +33,7 @@ class Fetcher
   BROWSER_TIMEOUT = 20
   BROWSER_DEADLINE = 25 # hard wall-clock kill for a hung Chrome (3A)
   USER_AGENT = "AIPageExtractor/1.0 (+https://github.com/lmagsino/ai-page-extractor)".freeze
+  USER_AGENT_TOKEN = "AIPageExtractor".freeze # product token robots.txt authors match on
 
   def self.call(url)
     new(url).call
@@ -43,6 +45,7 @@ class Fetcher
 
   def call
     uri = parse_and_guard!(@url)
+    enforce_politeness!(uri)
     html = fetch_static(uri)
     return html if sufficiently_rendered?(html)
 
@@ -72,6 +75,15 @@ class Fetcher
   end
 
   private
+
+  # Be a polite bot: respect robots.txt and don't hammer a single host.
+  def enforce_politeness!(uri)
+    unless RobotsPolicy.allowed?(uri, user_agent: USER_AGENT_TOKEN)
+      raise DisallowedByRobotsError, "robots.txt disallows fetching #{@url}"
+    end
+
+    Throttle.wait(uri.hostname)
+  end
 
   def parse_and_guard!(url)
     uri = URI.parse(url.to_s)
@@ -110,7 +122,8 @@ class Fetcher
       browser_options: {
         "no-sandbox" => nil,
         "disable-dev-shm-usage" => nil,
-        "host-resolver-rules" => "MAP #{uri.hostname} #{ip}"
+        "host-resolver-rules" => "MAP #{uri.hostname} #{ip}",
+        "user-agent" => USER_AGENT
       }
     )
 
