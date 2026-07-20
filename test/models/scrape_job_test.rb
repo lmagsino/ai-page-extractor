@@ -81,4 +81,19 @@ class ScrapeJobTest < ActiveSupport::TestCase
     job.result = nil
     assert_nil job.result_json
   end
+
+  test "updating broadcasts a panel replace to the job's stream" do
+    job = ScrapeJob.create!(valid_attrs)
+    captured = {}
+    job.define_singleton_method(:broadcast_replace_to) do |*args, **kwargs|
+      captured[:stream] = args
+      captured[:kwargs] = kwargs
+    end
+
+    job.update!(status: "fetching")
+
+    assert_equal [ job ], captured[:stream]
+    assert_equal job.panel_dom_id, captured[:kwargs][:target]
+    assert_equal "scrapes/panel", captured[:kwargs][:partial]
+  end
 end

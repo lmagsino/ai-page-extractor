@@ -22,6 +22,16 @@ class ScrapeJob < ApplicationRecord
 
   scope :gallery, -> { where(featured: true).order(created_at: :desc) }
 
+  # Live updates: whenever the record changes (status transition, result stored),
+  # push a replacement of the show-page panel to anyone subscribed to this job's
+  # stream. Replaces the old JS polling loop.
+  after_update_commit :broadcast_panel
+
+  # Stable DOM id for the show-page panel (target of the Turbo Stream replace).
+  def panel_dom_id
+    "scrape_job_#{id}_panel"
+  end
+
   # Parsed extraction result, or nil if not done / unparseable.
   def result
     return nil if result_json.blank?
@@ -33,5 +43,14 @@ class ScrapeJob < ApplicationRecord
 
   def result=(hash)
     self.result_json = hash.nil? ? nil : hash.to_json
+  end
+
+  private
+
+  def broadcast_panel
+    broadcast_replace_to self,
+                         target: panel_dom_id,
+                         partial: "scrapes/panel",
+                         locals: { scrape_job: self }
   end
 end
