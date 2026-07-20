@@ -114,7 +114,7 @@ run against saved page fixtures.
 - [x] **M0** — Rails 8 scaffold, CI, repository setup
 - [x] **M1** — Core pipeline: model, fetch → clean → extract → validate, SSRF guard
 - [x] **M2** — Live updates (Turbo Streams), curated gallery, repeat-scrape cache, robots.txt + politeness
-- [ ] **M3** — Deploy to a live URL, rate limiting, cost controls
+- [~] **M3** — Rate limiting + Chromium-in-Docker + Kamal config done ([DEPLOY.md](DEPLOY.md)); live deploy pending a host
 
 ## Responsible use
 

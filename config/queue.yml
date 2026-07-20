@@ -4,7 +4,10 @@ default: &default
       batch_size: 500
   workers:
     - queues: "*"
-      threads: 3
+      # Cap concurrent jobs low: each scrape may launch a headless Chrome, and
+      # too many at once will OOM a small box (3A). 2 threads x 1 process = at
+      # most 2 browsers in flight by default.
+      threads: 2
       processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
       polling_interval: 0.1
 
