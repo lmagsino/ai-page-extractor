@@ -1,6 +1,13 @@
 require "test_helper"
 
 class ScrapeJobProcessorTest < ActiveSupport::TestCase
+  setup do
+    @original_cache = Rails.cache
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+  end
+
+  teardown { Rails.cache = @original_cache }
+
   # Swap a class method for the duration of the block, then restore it.
   def stub_class_method(klass, method, impl)
     original = klass.method(method)
@@ -96,5 +103,33 @@ class ScrapeJobProcessorTest < ActiveSupport::TestCase
     job.reload
     assert job.failed?
     assert_match(/Unexpected error/, job.error_message)
+  end
+
+  test "a successful run writes the result to the cache (5A)" do
+    job = new_job
+    extraction = { "items" => [ { "name" => "Cached Widget" } ], "notes" => "" }
+    with_pipeline(html: "<html><body>ok</body></html>", extraction: extraction) do
+      ScrapeJobProcessor.perform_now(job.id)
+    end
+
+    cached = ExtractionCache.read(job.url, job.prompt)
+    assert_equal [ { "name" => "Cached Widget" } ], cached["items"]
+  end
+
+  test "a cache hit skips the pipeline entirely (5A)" do
+    job = new_job
+    cached = { "items" => [ { "name" => "From Cache" } ], "notes" => "" }
+    ExtractionCache.write(job.url, job.prompt, cached)
+
+    # Fetcher/Extractor must NOT be called on a hit; make them explode if they are.
+    stub_class_method(Fetcher, :call, ->(_url) { raise "fetch should not run on cache hit" }) do
+      stub_class_method(Extractor, :call, ->(**) { raise "extract should not run on cache hit" }) do
+        assert_nothing_raised { ScrapeJobProcessor.perform_now(job.id) }
+      end
+    end
+
+    job.reload
+    assert job.done?
+    assert_equal [ { "name" => "From Cache" } ], job.result["items"]
   end
 end

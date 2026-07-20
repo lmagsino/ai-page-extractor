@@ -25,6 +25,9 @@ class Validator
       raise ValidationError, "Extraction result failed validation: #{result.errors.to_h}"
     end
 
-    result.to_h
+    # Return string keys so validated output matches the extractor's JSON shape
+    # and the DB round-trip (job.result). dry-schema's to_h symbolizes top-level
+    # keys, which would otherwise desync the cache from the stored value.
+    result.to_h.deep_stringify_keys
   end
 end

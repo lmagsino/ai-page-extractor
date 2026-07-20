@@ -4,7 +4,13 @@ class ValidatorTest < ActiveSupport::TestCase
   test "accepts items array of hashes with a notes string" do
     data = { "items" => [ { "name" => "Widget", "price" => "$9" } ], "notes" => "found 1" }
     result = Validator.call(data)
-    assert_equal 1, result[:items].length
+    assert_equal 1, result["items"].length
+  end
+
+  test "returns string keys (matches extractor + DB round-trip)" do
+    result = Validator.call({ "items" => [ { "name" => "Widget" } ], "notes" => "x" })
+    assert_equal %w[items notes], result.keys.sort
+    assert_equal "Widget", result["items"].first["name"]
   end
 
   # B1 regression: the extractor is instructed it MAY return notes: "".

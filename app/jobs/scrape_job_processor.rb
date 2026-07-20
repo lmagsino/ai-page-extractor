@@ -20,6 +20,11 @@ class ScrapeJobProcessor < ApplicationJob
   def perform(scrape_job_id)
     job = ScrapeJob.find(scrape_job_id)
 
+    if (cached = ExtractionCache.read(job.url, job.prompt))
+      job.update!(status: "done", result: cached)
+      return
+    end
+
     job.fetching!
     html = Fetcher.call(job.url)
     cleaned = Cleaner.call(html)
@@ -28,6 +33,7 @@ class ScrapeJobProcessor < ApplicationJob
     raw = Extractor.call(markdown: cleaned.text, prompt: job.prompt)
     validated = Validator.call(raw)
 
+    ExtractionCache.write(job.url, job.prompt, validated)
     job.update!(status: "done", result: validated)
   rescue *PIPELINE_ERRORS => e
     job&.update!(status: "failed", error_message: e.message)
