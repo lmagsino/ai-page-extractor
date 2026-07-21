@@ -25,6 +25,7 @@ gem "reverse_markdown"     # HTML -> markdown, cuts token count before the LLM
 gem "dry-schema"           # outer-shape validation of extraction results
 gem "private_address_check" # SSRF guard: reject private/loopback/link-local IPs
 gem "rack-attack"          # per-IP + global rate limiting (cost control)
+gem "csv"                  # CSV export (no longer a default gem in Ruby 3.4+)
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"

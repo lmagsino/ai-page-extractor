@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     member do
       # Lightweight JSON endpoint the show page polls for background progress.
       get :status
+      # Download the extracted result as CSV.
+      get :export
     end
   end
 

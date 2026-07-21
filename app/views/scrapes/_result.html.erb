@@ -1,14 +1,16 @@
-<%# Renders an extraction result. Columns are the UNION of all item keys and
-    each cell is looked up by key (B3), so heterogeneous / reordered item keys
-    never shift values into the wrong column. %>
-<% items = result["items"] || [] %>
+<%# Renders an extraction result table. Columns come from ScrapeJob#result_columns
+    (the union of all item keys) and each cell is looked up by key, so
+    heterogeneous / reordered item keys never shift values into the wrong
+    column (B3). %>
+<% result = scrape_job.result %>
 
 <% if result["notes"].present? %>
   <p class="notes"><em><%= result["notes"] %></em></p>
 <% end %>
 
-<% if items.any? %>
-  <% columns = items.flat_map(&:keys).uniq %>
+<% if scrape_job.result_items.any? %>
+  <p><%= link_to "Download CSV", export_scrape_path(scrape_job, format: :csv) %></p>
+  <% columns = scrape_job.result_columns %>
   <table>
     <thead>
       <tr>
@@ -18,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      <% items.each do |item| %>
+      <% scrape_job.result_items.each do |item| %>
         <tr>
           <% columns.each do |key| %>
             <td><%= item[key] %></td>

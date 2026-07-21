@@ -1,3 +1,5 @@
+require "csv"
+
 class ScrapesController < ApplicationController
   # Public index shows ONLY curated gallery items (2A) — never other users'
   # submissions. A user's own run is reachable via its show URL, not listed here.
@@ -33,6 +35,23 @@ class ScrapesController < ApplicationController
       result: job.result,
       error_message: job.error_message
     }
+  end
+
+  # Download a finished extraction as CSV. Columns are the union of item keys
+  # (ScrapeJob#result_columns), matching the on-screen table.
+  def export
+    job = ScrapeJob.find(params[:id])
+    unless job.done? && job.result_items.any?
+      head :not_found and return
+    end
+
+    columns = job.result_columns
+    csv = CSV.generate do |out|
+      out << columns
+      job.result_items.each { |item| out << columns.map { |c| item[c] } }
+    end
+
+    send_data csv, filename: "extraction-#{job.id}.csv", type: "text/csv", disposition: "attachment"
   end
 
   private

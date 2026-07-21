@@ -12,7 +12,7 @@
     <% end %>
     <%# Fully-qualified: this partial also renders from broadcasts (no controller
         context), where a bare "result" would look under application/. %>
-    <%= render "scrapes/result", result: scrape_job.result %>
+    <%= render "scrapes/result", scrape_job: scrape_job %>
   <% elsif scrape_job.failed? %>
     <p class="error">Failed: <%= scrape_job.error_message %></p>
   <% else %>

@@ -65,4 +65,26 @@ class ScrapesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "done", body["status"]
     assert_equal [ { "name" => "A" } ], body["result"]["items"]
   end
+
+  test "export returns the result as a CSV with union-of-keys headers" do
+    job = ScrapeJob.create!(url: "https://example.com/x", prompt: "extract", status: "done")
+    job.update!(result: { "items" => [
+      { "name" => "A", "price" => "$1" },
+      { "name" => "B", "stock" => "3" }
+    ], "notes" => "" })
+
+    get export_scrape_path(job, format: :csv)
+    assert_response :success
+    assert_match %r{text/csv}, @response.media_type
+    lines = @response.body.strip.split("\n")
+    assert_equal "name,price,stock", lines[0]
+    assert_equal "A,$1,", lines[1]      # missing stock -> empty cell, aligned
+    assert_equal "B,,3", lines[2]        # missing price -> empty cell, aligned
+  end
+
+  test "export is 404 when the job is not done" do
+    job = ScrapeJob.create!(url: "https://example.com/x", prompt: "extract") # pending
+    get export_scrape_path(job, format: :csv)
+    assert_response :not_found
+  end
 end

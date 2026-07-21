@@ -45,6 +45,18 @@ class ScrapeJob < ApplicationRecord
     self.result_json = hash.nil? ? nil : hash.to_json
   end
 
+  # Extracted records, or [] when there's no result yet.
+  def result_items
+    result&.fetch("items", nil) || []
+  end
+
+  # Column headers = the UNION of every item's keys, so heterogeneous or
+  # reordered item shapes stay aligned in the table and CSV (B3). Single source
+  # of truth shared by the result view and the CSV export.
+  def result_columns
+    result_items.flat_map(&:keys).uniq
+  end
+
   private
 
   def broadcast_panel

@@ -82,6 +82,23 @@ class ScrapeJobTest < ActiveSupport::TestCase
     assert_nil job.result_json
   end
 
+  test "result_items and result_columns are empty without a result" do
+    job = ScrapeJob.new(valid_attrs)
+    assert_empty job.result_items
+    assert_empty job.result_columns
+  end
+
+  test "result_columns is the union of all item keys (B3)" do
+    job = ScrapeJob.new(valid_attrs)
+    job.result = { "items" => [
+      { "name" => "A", "price" => "$1" },
+      { "name" => "B", "stock" => "3" } # different key set
+    ], "notes" => "" }
+
+    assert_equal %w[name price stock], job.result_columns
+    assert_equal 2, job.result_items.length
+  end
+
   test "updating broadcasts a panel replace to the job's stream" do
     job = ScrapeJob.create!(valid_attrs)
     captured = {}
