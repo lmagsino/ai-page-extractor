@@ -34,7 +34,7 @@ class ScrapeJobProcessor < ApplicationJob
     validated = Validator.call(raw)
 
     ExtractionCache.write(job.url, job.prompt, validated)
-    job.update!(status: "done", result: validated)
+    job.update!(status: "done", result: validated, truncated: cleaned.truncated)
   rescue *PIPELINE_ERRORS => e
     job&.update!(status: "failed", error_message: e.message)
   rescue StandardError => e

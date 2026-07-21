@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_17_103717) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_21_081531) do
   create_table "scrape_jobs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "error_message"
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_103717) do
     t.text "prompt", null: false
     t.text "result_json"
     t.string "status", default: "pending", null: false
+    t.boolean "truncated", default: false, null: false
     t.datetime "updated_at", null: false
     t.string "url", null: false
     t.index ["featured"], name: "index_scrape_jobs_on_featured"

@@ -107,6 +107,28 @@ class ScrapeJobProcessorTest < ActiveSupport::TestCase
     assert_equal [ { "name" => "Cached Widget" } ], cached["items"]
   end
 
+  test "sets truncated when the cleaned page was cut at MAX_CHARS" do
+    job = new_job
+    long_html = "<html><body><p>#{"x" * (Cleaner::MAX_CHARS + 500)}</p></body></html>"
+    with_pipeline(html: long_html, extraction: { "items" => [ { "x" => 1 } ], "notes" => "" }) do
+      ScrapeJobProcessor.perform_now(job.id)
+    end
+
+    job.reload
+    assert job.done?
+    assert job.truncated?, "expected the job to be flagged truncated"
+  end
+
+  test "does not set truncated for a short page" do
+    job = new_job
+    with_pipeline(html: "<html><body>short</body></html>", extraction: { "items" => [], "notes" => "" }) do
+      ScrapeJobProcessor.perform_now(job.id)
+    end
+
+    job.reload
+    assert_not job.truncated?
+  end
+
   test "a cache hit skips the pipeline entirely (5A)" do
     job = new_job
     cached = { "items" => [ { "name" => "From Cache" } ], "notes" => "" }

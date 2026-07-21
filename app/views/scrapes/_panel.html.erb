@@ -4,6 +4,12 @@
   <p><strong>Status:</strong> <%= scrape_job.status %></p>
 
   <% if scrape_job.done? && scrape_job.result %>
+    <% if scrape_job.truncated? %>
+      <p class="warning">
+        Heads up: the page was long and got truncated before extraction, so
+        results may be incomplete.
+      </p>
+    <% end %>
     <%# Fully-qualified: this partial also renders from broadcasts (no controller
         context), where a bare "result" would look under application/. %>
     <%= render "scrapes/result", result: scrape_job.result %>
