@@ -24,6 +24,15 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header class="masthead">
+      <div class="masthead__inner">
+        <a class="wordmark" href="/">ai_page_extractor<span class="caret" aria-hidden="true">▸</span></a>
+        <p class="tagline">Point it at a URL, describe what you want in plain English, get structured data back.</p>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <%= yield %>
+    </main>
   </body>
 </html>

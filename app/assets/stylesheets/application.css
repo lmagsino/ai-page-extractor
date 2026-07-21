@@ -1,10 +1,299 @@
 /*
- * This is a manifest file that'll be compiled into application.css.
+ * AI Page Extractor — visual identity.
  *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
+ * Thesis: unstructured -> structured. The machine speaks in monospace; the
+ * payoff is a precise data grid. Cool neutral workspace, one cobalt accent,
+ * spent boldness on the mono voice + the result grid. Everything else quiet.
  */
+
+:root {
+  --ink: #111418;
+  --paper: #f6f7f9;
+  --surface: #ffffff;
+  --line: #e5e9ef;
+  --line-strong: #ccd3dd;
+  --muted: #6a717d;
+  --accent: #1b4dff;
+  --accent-soft: #eef1ff;
+  --ok: #0a7d4d;
+  --ok-soft: #e7f5ee;
+  --warn: #8a5300;
+  --warn-soft: #fff3dd;
+  --error: #b0142a;
+  --error-soft: #fdecee;
+
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+
+  --measure: 46rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- masthead ---------------------------------------------------------- */
+
+.masthead {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.masthead__inner {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 1.4rem 1.25rem 1.5rem;
+}
+
+.wordmark {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.wordmark .caret {
+  color: var(--accent);
+  animation: blink 1.1s step-end infinite;
+}
+
+.tagline {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 34rem;
+}
+
+/* ---- workspace --------------------------------------------------------- */
+
+.workspace {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 2.25rem 1.25rem 4rem;
+}
+
+h1, h2, h3 {
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.5rem; margin: 0 0 0.35rem; }
+h2 { font-size: 1.15rem; margin: 2rem 0 0.75rem; }
+
+.lede { color: var(--muted); margin: 0 0 1.75rem; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+
+/* ---- eyebrow label (the mono "machine" voice) -------------------------- */
+
+.eyebrow, .field label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+/* ---- form -------------------------------------------------------------- */
+
+.field { margin-bottom: 1.25rem; }
+
+.field input[type="url"],
+.field input[type="text"],
+.field textarea {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+}
+
+.field textarea { font-family: var(--sans); line-height: 1.5; resize: vertical; }
+
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+input[type="submit"], .btn {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.65rem 1.15rem;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover, .btn:hover { filter: brightness(1.07); }
+
+input[type="submit"]:focus-visible, a:focus-visible, .btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- status (machine state) -------------------------------------------- */
+
+.status-line { font-family: var(--mono); font-size: 0.9rem; margin: 0.75rem 0 1.25rem; }
+
+.status-line .label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  margin-right: 0.5rem;
+}
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.state::before { content: "\25B8"; }
+
+.state--done { background: var(--ok-soft); color: var(--ok); }
+.state--done::before { content: "\25CF"; }
+
+.state--failed { background: var(--error-soft); color: var(--error); }
+.state--failed::before { content: "\00D7"; }
+
+.state--pending, .state--fetching, .state--extracting {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* ---- messages ---------------------------------------------------------- */
+
+.errors, .warning, .notes, .error {
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.92rem;
+}
+
+.errors { background: var(--error-soft); border: 1px solid #f2c4cb; }
+.errors ul { margin: 0; padding-left: 1.1rem; }
+.error { background: var(--error-soft); color: var(--error); }
+.warning { background: var(--warn-soft); color: var(--warn); }
+.notes { background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+
+/* ---- result data grid (the payoff) ------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0.5rem 0 1.25rem;
+}
+
+thead th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--muted);
+  padding: 0.6rem 0.85rem;
+  background: #fafbfc;
+  border-bottom: 2px solid var(--accent);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 0.6rem 0.85rem;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+
+tbody tr:first-child td { border-top: none; }
+
+/* ---- gallery ----------------------------------------------------------- */
+
+.gallery { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+
+.gallery li {
+  padding: 0.85rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.gallery a { font-family: var(--mono); font-size: 0.9rem; }
+.gallery .prompt { color: var(--muted); font-size: 0.88rem; }
+
+/* ---- raw json ---------------------------------------------------------- */
+
+details { margin: 0.5rem 0 1.5rem; }
+summary { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); cursor: pointer; }
+pre {
+  background: #0f1320;
+  color: #d7dced;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* ---- footer nav -------------------------------------------------------- */
+
+.pagenav {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.meta { color: var(--muted); font-size: 0.9rem; }
+.meta strong { font-family: var(--mono); font-weight: 600; color: var(--ink); }
+
+/* ---- motion / a11y ----------------------------------------------------- */
+
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes pulse { 50% { opacity: 0.55; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wordmark .caret, .state { animation: none; }
+}
+
+@media (max-width: 480px) {
+  .masthead__inner, .workspace { padding-left: 1rem; padding-right: 1rem; }
+  h1 { font-size: 1.3rem; }
+}

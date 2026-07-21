@@ -2,12 +2,12 @@
 
 <h1>Extraction #<%= @scrape_job.id %></h1>
 
-<p><strong>URL:</strong> <%= @scrape_job.url %></p>
-<p><strong>Prompt:</strong> <%= @scrape_job.prompt %></p>
+<p class="meta"><strong>URL</strong> <%= @scrape_job.url %></p>
+<p class="meta"><strong>Prompt</strong> <%= @scrape_job.prompt %></p>
 
 <%= render "panel", scrape_job: @scrape_job %>
 
-<p>
+<p class="pagenav">
   <%= link_to "New extraction", new_scrape_path %> ·
   <%= link_to "Example extractions", scrapes_path %>
 </p>

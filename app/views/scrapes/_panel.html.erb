@@ -1,7 +1,10 @@
 <%# Live-updating region of the show page. Replaced in place via Turbo Stream
     each time the job changes (see ScrapeJob#broadcast_panel). %>
 <div id="<%= scrape_job.panel_dom_id %>">
-  <p><strong>Status:</strong> <%= scrape_job.status %></p>
+  <p class="status-line">
+    <span class="label">status</span>
+    <span class="state state--<%= scrape_job.status %>"><%= scrape_job.status %></span>
+  </p>
 
   <% if scrape_job.done? && scrape_job.result %>
     <% if scrape_job.truncated? %>

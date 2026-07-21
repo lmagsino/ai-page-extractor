@@ -1,5 +1,5 @@
-<h1>AI Page Extractor</h1>
-<p>Give it a URL and describe what you want pulled off the page in plain English.</p>
+<h1>New extraction</h1>
+<p class="lede">No CSS selectors, no per-site rules. Describe the data and the model pulls it.</p>
 
 <%= form_with model: @scrape_job, url: scrapes_path do |form| %>
   <% if @scrape_job.errors.any? %>
@@ -26,4 +26,4 @@
   <%= form.submit "Extract" %>
 <% end %>
 
-<p><%= link_to "View example extractions", scrapes_path %></p>
+<p class="pagenav"><%= link_to "View example extractions", scrapes_path %></p>
